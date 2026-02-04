@@ -25,14 +25,21 @@ function App() {
     setMessages(prevMessages => {
       let lastMessage = prevMessages[prevMessages.length - 1];
       if (prevMessages.length === 0 || !lastMessage.isUser) {
+        // Deduplicar sources usando Set
+        const existingSources = lastMessage.sources || [];
+        const allSources = [...existingSources, ...sources];
+        const uniqueSources: string[] = Array.from(new Set(allSources));
+        
         return [...prevMessages.slice(0, -1), {
           message: lastMessage.message + chunk,
           isUser: false,
-          sources: lastMessage.sources ? [...lastMessage.sources, ...sources] : sources
+          sources: uniqueSources
         }];
       }
 
-      return [...prevMessages, {message: chunk, isUser: false, sources}];
+      // Deduplicar sources para nuevos mensajes también
+      const uniqueSources: string[] = Array.from(new Set(sources));
+      return [...prevMessages, {message: chunk, isUser: false, sources: uniqueSources}];
     })
   }
 
@@ -44,7 +51,10 @@ function App() {
     }
 
     if (parsedData.docs) {
-      setPartialMessage("", parsedData.docs.map((doc: any) => doc.metadata.source))
+      // Extraer sources y deduplicar inmediatamente
+      const sources = parsedData.docs.map((doc: any) => doc.metadata.source).filter((source: any): source is string => typeof source === 'string');
+      const uniqueSources: string[] = Array.from(new Set(sources));
+      setPartialMessage("", uniqueSources)
     }
   }
 
@@ -145,7 +155,8 @@ function App() {
                 {!msg.isUser && (
                   <div className={"text-xs"}>
                     <hr className="border-b mt-5 mb-5 border-gray-200"></hr>
-                    {msg.sources?.map((source, index) => (
+                    {/* Deduplicar sources antes de mostrar usando Set */}
+                    {Array.from(new Set(msg.sources || [])).map((source, index) => (
                       <div key={index}>
                         <a
                           target="_blank"
