@@ -11,6 +11,9 @@ interface Message {
 }
 
 function App() {
+  // Obtener URL del backend desde variable de entorno o usar default
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  
   const [inputValue, setInputValue] = useState("")
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
@@ -63,7 +66,7 @@ function App() {
 
     setMessages(prevMessages => [...prevMessages, {message, isUser: true}]);
 
-    await fetchEventSource(`http://localhost:8000/rag/stream`, {
+    await fetchEventSource(`${API_URL}/rag/stream`, {
       method: 'POST',
       openWhenHidden: true,
       headers: {
@@ -109,7 +112,7 @@ function App() {
   
     // Example: Sending files to a backend endpoint
     try {
-      const response = await fetch('http://localhost:8000/upload', {
+      const response = await fetch(`${API_URL}/upload`, {
         method: 'POST',
         body: formData, // No headers for multipart/form-data; fetch adds it automatically
       });
@@ -126,7 +129,7 @@ function App() {
 
   const loadAndProcessPDFs = async () => {
     try {
-      const response = await fetch('http://localhost:8000/load-and-process-pdfs', {
+      const response = await fetch(`${API_URL}/load-and-process-pdfs`, {
         method: 'POST',
       });
       if (response.ok) {
@@ -161,7 +164,7 @@ function App() {
                         <a
                           target="_blank"
                           download
-                          href={`${"http://localhost:8000"}/rag/static/${encodeURI(formatSource(source))}`}
+                          href={`${API_URL}/rag/static/${encodeURI(formatSource(source))}`}
                           rel="noreferrer"
                           className="text-blue-600 hover:text-blue-800"
                         >{formatSource(source)}</a>

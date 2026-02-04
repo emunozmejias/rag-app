@@ -429,7 +429,7 @@ volumes:
 
 Ejecutar con:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ---

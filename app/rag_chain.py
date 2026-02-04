@@ -17,9 +17,22 @@ from langchain_core.messages import get_buffer_string
 
 load_dotenv()
 
+# Obtener configuración de PostgreSQL desde variables de entorno
+postgres_host = os.getenv("POSTGRES_HOST", "localhost")
+postgres_port = os.getenv("POSTGRES_PORT", "5432")
+postgres_user = os.getenv("POSTGRES_USER", "postgres")
+postgres_password = os.getenv("POSTGRES_PASSWORD", "")
+postgres_vector_db = os.getenv("POSTGRES_VECTOR_DB", "database164")
+
+# Construir connection string para vector store
+if postgres_password:
+    vector_connection_string = f"postgresql+psycopg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_vector_db}"
+else:
+    vector_connection_string = f"postgresql+psycopg://{postgres_user}@{postgres_host}:{postgres_port}/{postgres_vector_db}"
+
 vector_store = PGVector(
     collection_name="collection164",
-    connection_string="postgresql+psycopg://postgres@localhost:5432/database164",
+    connection_string=vector_connection_string,
     embedding_function=OpenAIEmbeddings()
 )
 
@@ -54,7 +67,12 @@ old_chain = (
         )
 ).with_types(input_type=RagInput)
 
-postgres_memory_url = "postgresql+psycopg://postgres:postgres@localhost:5432/pdf_rag_history"
+# Construir connection string para historial de chat
+postgres_history_db = os.getenv("POSTGRES_HISTORY_DB", "pdf_rag_history")
+if postgres_password:
+    postgres_memory_url = f"postgresql+psycopg://{postgres_user}:{postgres_password}@{postgres_host}:{postgres_port}/{postgres_history_db}"
+else:
+    postgres_memory_url = f"postgresql+psycopg://{postgres_user}@{postgres_host}:{postgres_port}/{postgres_history_db}"
 
 get_session_history = lambda session_id: SQLChatMessageHistory(
     connection_string=postgres_memory_url,

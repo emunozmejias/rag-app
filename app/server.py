@@ -10,14 +10,18 @@ from app.rag_chain import final_chain
 
 app = FastAPI()
 
+# Obtener origen permitido desde variable de entorno o usar default
+cors_origins_str = os.getenv("CORS_ORIGINS", "http://localhost:3001")
+# Limpiar espacios y dividir por comas
+cors_origins = [origin.strip() for origin in cors_origins_str.split(",") if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000"
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 app.mount("/rag/static", StaticFiles(directory="./pdf-documents"), name="static")
