@@ -14,6 +14,122 @@ Es una aplicación de **RAG (Retrieval-Augmented Generation)**, que combina bús
 
 ---
 
+## 🐳 Despliegue con Docker (Recomendado)
+
+### Prerrequisitos
+
+- **Docker** instalado (versión 20.10 o superior)
+- **Docker Compose** instalado (versión 1.29 o superior)
+- **OpenAI API Key** (obligatorio)
+
+### Pasos para Desplegar
+
+#### 1. Configurar Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto:
+
+```bash
+# OpenAI API Key (requerido)
+OPENAI_API_KEY=tu_clave_api_openai_aqui
+
+# PostgreSQL Configuration (opcional, defaults funcionan)
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_VECTOR_DB=database164
+POSTGRES_HISTORY_DB=pdf_rag_history
+
+# CORS Origins
+CORS_ORIGINS=http://localhost:3001,http://localhost:80
+
+# PDF Documents Directory
+PDF_DOCUMENTS_DIR=./pdf-documents
+```
+
+#### 2. Construir y Ejecutar los Contenedores
+
+**Opción A: Usando el script de ayuda**
+```bash
+./docker-start.sh
+```
+
+**Opción B: Manualmente**
+```bash
+# Construir todas las imágenes
+docker compose build
+
+# Iniciar todos los servicios
+docker compose up -d
+
+# Ver los logs
+docker compose logs -f
+```
+
+#### 3. Verificar que Todo Esté Funcionando
+
+```bash
+# Verificar estado de los contenedores
+docker compose ps
+
+# Verificar logs de un servicio específico
+docker compose logs backend
+docker compose logs frontend
+docker compose logs postgres
+```
+
+#### 4. Acceder a la Aplicación
+
+Una vez que todos los servicios estén corriendo:
+
+- **Frontend**: http://localhost:3001
+- **Backend API**: http://localhost:8000
+- **Documentación API**: http://localhost:8000/docs
+
+#### 5. Procesar PDFs
+
+1. Abre http://localhost:3001 en tu navegador
+2. Haz clic en "Upload PDFs" para subir archivos PDF
+3. Haz clic en "Load and Process PDFs" para procesarlos
+4. Una vez procesados, puedes hacer preguntas sobre el contenido
+
+### Comandos Útiles
+
+```bash
+# Detener todos los servicios
+docker compose down
+
+# Detener y eliminar volúmenes (⚠️ elimina datos de BD)
+docker compose down -v
+
+# Reiniciar un servicio específico
+docker compose restart backend
+
+# Reconstruir un servicio después de cambios
+docker compose build backend
+docker compose up -d backend
+
+# Ver logs en tiempo real
+docker compose logs -f
+
+# Acceder al contenedor del backend
+docker compose exec backend bash
+
+# Ejecutar el procesador de PDFs manualmente
+docker compose exec backend poetry run python rag-data-loader/rag_load_and_process.py
+```
+
+### Troubleshooting
+
+- **Error de conexión**: Verifica que todos los contenedores estén corriendo con `docker compose ps`
+- **Error de CORS**: Verifica que `CORS_ORIGINS` en `.env` incluya `http://localhost:3001`
+- **Error de OpenAI**: Verifica que `OPENAI_API_KEY` esté configurada correctamente en `.env`
+- **PDFs no se procesan**: Verifica los logs con `docker compose logs backend`
+
+Para más detalles sobre el despliegue con Docker, consulta [DOCKER_SETUP.md](./DOCKER_SETUP.md).
+
+---
+
 ## 🏗️ Arquitectura del Proyecto
 
 La aplicación está dividida en dos componentes principales:
