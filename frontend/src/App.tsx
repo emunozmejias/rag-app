@@ -12,7 +12,8 @@ interface Message {
 
 function App() {
   // Obtener URL del backend desde variable de entorno o usar default
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  // En producción Docker, esta variable se pasa como argumento de build
+  const API_URL = process.env.REACT_APP_API_URL || 'http://10.50.1.245:8000';
   
   const [inputValue, setInputValue] = useState("")
   const [messages, setMessages] = useState<Message[]>([]);
