@@ -36,7 +36,7 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_VECTOR_DB=database164
       - POSTGRES_HISTORY_DB=pdf_rag_history
-      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3001,http://localhost:80}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3001,http://localhost:80,http://10.50.1.245:3001,http://10.50.1.245:80}
       - PYTHONUNBUFFERED=1
     ports:
       - "8000:8000"
@@ -55,7 +55,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - REACT_APP_API_URL=http://localhost:8000
+        - REACT_APP_API_URL=${REACT_APP_API_URL:-http://10.50.1.245:8000}
     container_name: rag-frontend
     ports:
       - "3001:80"
