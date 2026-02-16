@@ -146,7 +146,7 @@ function App() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <header className="bg-blue-100 text-gray-800 text-center p-4 shadow-sm">
-        A Basic CHAT WITH YOUR PRIVATE PDFS Rag LLM App
+        Chatbot que permite consultar archivos PDF privados utilizando RAG (Generación Aumentada por Recuperación) y OpenAI LLM
       </header>
       <main className="flex-grow container mx-auto p-4 flex-col">
         <div className="flex-grow bg-white shadow overflow-hidden sm:rounded-lg">
